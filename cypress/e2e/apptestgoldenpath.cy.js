@@ -18,9 +18,9 @@ describe('Pruebas de autenticación', () => {
     cy.visit('http://localhost:5173/register'); // visita a la pagina de registro
     cy.wait(2000);
 
-    cy.get('#root > div > form > div:nth-child(3) > input').type('luisas'); // nombre de usuario
+    cy.get('#root > div > form > div:nth-child(3) > input').type('messi'); // nombre de usuario
     cy.wait(2000);
-    cy.get('#root > div > form > div:nth-child(4) > input').type('louis@mail.com'); // email
+    cy.get('#root > div > form > div:nth-child(4) > input').type('messi@mail.com'); // email
     cy.wait(2000);
     cy.get('#root > div > form > div:nth-child(5) > input').type('@trainuP999'); // password
     cy.wait(2000);
