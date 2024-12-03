@@ -29,4 +29,13 @@ app.use("/api/niveles", nivelRouter);
 app.use("/api/sesionrutinas", sesionRutinaRouter);
 app.use("/api/rutinaejercicios", rutinaEjercicioRouter);
 
+// Ruta para la raíz del servidor
+app.get('/', (req, res) => {
+	res.send('Servidor funcionando correctamente'); 
+});
+// Ruta para manejar errores 404 
+app.use((req, res, next) => { 
+	res.status(404).send("Ruta no encontrada"); 
+});
+
 app.listen(port, () => console.log(`Server running on port: ${port}`));
