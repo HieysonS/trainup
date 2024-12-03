@@ -204,6 +204,7 @@ const loginUser = async (req, res) => {
     estatura: user.estatura,
     peso: user.peso,
     systmedida: user.systmedida,
+    isAdmin: user.isAdmin,
     token,
   });
 };
@@ -236,6 +237,29 @@ const logoutCurrentUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   const users = await User.find({});
   res.json(users);
+};
+
+const searchUserByEmail = async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    if (!email) {
+      return res
+        .status(400)
+        .json({ error: "El parámetro 'email' es requerido" });
+    }
+
+    const user = await User.find({ email: { $regex: email, $options: "i" } }); // $options: "i" para hacerlo case-insensitive
+
+    if (!user || user.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error al buscar usuario por email:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };
 
 const getCurrentUserProfile = async (req, res) => {
@@ -285,11 +309,35 @@ const updateCurrentUserProfile = async (req, res) => {
       estatura: updatedUser.estatura,
       peso: updatedUser.peso,
       systmedida: updatedUser.systmedida,
+      isAdmin: updatedUser.isAdmin,
     });
     return;
   } else {
     res.status(404);
     return res.status(400).json({ error: "Ese usuario no existe" });
+  }
+};
+
+const toggleAdminRole = async (req, res) => {
+  const { id } = req.params;
+  const { isAdmin } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    user.isAdmin = isAdmin;
+    await user.save();
+
+    res.status(200).json({ message: "Rol actualizado correctamente", user });
+  } catch (error) {
+    console.error("Error al actualizar el rol de administrador:", error);
+    res
+      .status(500)
+      .json({ error: "Error al actualizar el rol de administrador" });
   }
 };
 
@@ -357,4 +405,6 @@ export {
   verify2FA,
   tryChangePass,
   changeUserPass,
+  toggleAdminRole,
+  searchUserByEmail,
 };
