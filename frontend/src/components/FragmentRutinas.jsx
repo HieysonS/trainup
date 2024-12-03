@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import useGetDatosRutinas from "../hooks/useGetDatosRutinas";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import imgPersonalizado from "../assets/personalizado1.gif";
 import iconPesas from "../assets/pesas.png";
 import iconCalorias from "../assets/calorias.png";
 import iconReloj from "../assets/reloj.png";
+import useMotivation from "../hooks/useMotivation";
 
 function FragmentRutinas() {
   const { user } = useAuthContext();
@@ -17,11 +18,16 @@ function FragmentRutinas() {
   const peso = user.peso;
   const estatura = user.estatura;
 
+  const { motivation, error, getMotivationMessage } = useMotivation();
   const [selectedButton, setSelectedButton] = useState("Novato");
   const [imc, setImc] = useState(0);
   const [categoriaIMC, setCategoriaIMC] = useState("");
   const { rutinasCount, totalKcal, totalMinutos } = useGetDatosRutinas();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getMotivationMessage();
+  }, [getMotivationMessage]);
 
   const getImageUrl = () => {
     switch (selectedButton) {
@@ -72,6 +78,38 @@ function FragmentRutinas() {
       style={{ marginTop: "-80px" }}
     >
       <div className="container py-4">
+        {/* Mostrar mensaje motivacional */}
+        {motivation && (
+          <div
+            className="alert text-center mb-4"
+            style={{
+              backgroundColor: "#f4f7fc",
+              border: "1px solid #d1d9e6",
+              padding: "16px",
+              borderRadius: "12px",
+              fontWeight: "600",
+              color: "#2c3e50",
+              fontSize: "18px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              marginTop: "80px",
+              marginBottom: "20px",
+            }}
+          >
+            <span
+              role="img"
+              aria-label="motivational emoji"
+              style={{ marginRight: "12px", fontSize: "24px" }}
+            >
+              💪
+            </span>
+            {motivation}
+          </div>
+        )}
+
         <div
           className="row g-4 align-items-center"
           style={{ minHeight: "80vh" }}

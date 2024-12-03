@@ -1,7 +1,8 @@
 import React from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { Link } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
-import { useAuthContext } from "../hooks/useAuthContext";
+import useGetRutinasNotifications from "../hooks/useGetRutinasNotifications";
 import perfilPic from "../assets/perfil_pic1.png";
 import iconEditar from "../assets/icon_editar.png";
 import fondo_workout from "../assets/workout_bg.gif";
@@ -9,12 +10,12 @@ import fondo_workout from "../assets/workout_bg.gif";
 function FragmentPerfil() {
   const { logout } = useLogout();
   const { user } = useAuthContext();
+  const { notifications } = useGetRutinasNotifications();
 
   const handleClick = () => {
     logout();
   };
 
-  // Función para calcular la edad según la fecha de nacimiento
   const calcularEdad = (fechaNacimiento) => {
     const hoy = new Date();
     const fechaNac = new Date(fechaNacimiento);
@@ -26,10 +27,8 @@ function FragmentPerfil() {
     return edad;
   };
 
-  // Función para convertir cm a m
   const convertirCmAMetros = (cm) => (cm / 100).toFixed(2);
 
-  // Función para convertir in a ft y in
   const convertirInAPiesYPulgadas = (inches) => {
     const feet = Math.floor(inches / 12);
     const remainingInches = inches % 12;
@@ -104,7 +103,33 @@ function FragmentPerfil() {
               <strong>Peso:</strong> {user.peso} {user.systmedida ? "kg" : "lb"}
             </p>
           </div>
+          <div class="alert alert-success" role="alert">
+            Se recomienda actualizar su peso cada cierto tiempo, de preferencia
+            hacerlo semanalmente
+          </div>
         </div>
+
+        {/* Notificaciones de Rutinas */}
+        <div className="col-12 mt-4">
+          {notifications.length > 0 && (
+            <div className="alert alert-info">
+              <strong>Notificaciones:</strong>
+              {notifications.map((notification, index) => (
+                <div key={index}>
+                  <p>{notification.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {user.isAdmin && (
+          <Link to="/admin">
+            <button className="btn btn-primary mt-3">
+              Ir al Dashboard de Admin
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );

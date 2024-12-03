@@ -17,6 +17,7 @@ import CreateRutinaPer from "./pages/User/CreateRutinaPer";
 import CreateRutinaBase from "./pages/User/CreateRutinaBase";
 import VerRutina from "./components/VerRutina";
 import RunRutina from "./pages/User/RunRutina";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import { useRutinaContext } from "./hooks/useRutinaContext";
 
 function App() {
@@ -64,6 +65,10 @@ function App() {
         <Route
           path="/runrutina"
           element={rutina ? <RunRutina /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/admin"
+          element={user?.isAdmin ? <AdminDashboard /> : <Navigate to="/" />}
         ></Route>
       </Routes>
     </BrowserRouter>

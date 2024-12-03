@@ -2,15 +2,40 @@ import Ejercicio from "../models/ejercicioModel.js";
 import mongoose from "mongoose";
 
 const createEjercicio = async (req, res) => {
-  const { nombre, objetivo, tipo } = req.body;
+  const { nombre, objetivo, tipo, link } = req.body;
 
   try {
-    const ejercicio = await Ejercicio.create({ nombre, objetivo, tipo });
+    const ejercicio = await Ejercicio.create({ nombre, objetivo, tipo, link });
     return res.status(200).json(ejercicio);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
 };
+
+const createMultipleEjercicios = async (req, res) => {
+  const ejercicios = req.body;
+
+  if (!Array.isArray(ejercicios) || ejercicios.length === 0) {
+    return res
+      .status(400)
+      .json({ error: "Debe enviar un array de ejercicios." });
+  }
+
+  try {
+    const ejerciciosCreados = await Promise.all(
+      ejercicios.map(async (ejercicio) => {
+        const { nombre, objetivo, tipo, link } = ejercicio;
+        return await Ejercicio.create({ nombre, objetivo, tipo, link });
+      })
+    );
+
+    return res.status(200).json(ejerciciosCreados);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export default createMultipleEjercicios;
 
 const getEjercicio = async (req, res) => {
   const { nombre } = req.params;
@@ -105,4 +130,5 @@ export {
   getEjercicioById,
   getEjerciciosbyObjetivo,
   updateEjercicio,
+  createMultipleEjercicios,
 };
